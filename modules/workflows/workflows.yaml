@@ -1,6 +1,5 @@
-
 main:
-  params: [env, dbt_job, region]
+  params: [region]
 
   steps:
 
@@ -8,7 +7,6 @@ main:
         assign:
           - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT")}
 
-    # ✅ Load Bronze depuis external tables
     - load_users:
         call: googleapis.bigquery.jobs.query
         args:
@@ -27,12 +25,5 @@ main:
               CREATE OR REPLACE TABLE `${project}.bronze.connections`
               AS SELECT * FROM `${project}.bronze.connections_ext`;
 
-    # ✅ Run DBT (Cloud Run Job)
-    - run_dbt:
-        call: googleapis.run.namespaces.jobs.run
-        args:
-          name: ${dbt_job}
-          location: ${region}
-
     - done:
-        return: "pipeline success"
+        return: "OK"
