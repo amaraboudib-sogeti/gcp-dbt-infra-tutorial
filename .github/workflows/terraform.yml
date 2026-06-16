@@ -17,22 +17,25 @@ jobs:
       - uses: actions/checkout@v3
 
       # ✅ détermination env
+
       - name: Set environment
         run: |
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
             echo "ENV=prod" >> $GITHUB_ENV
             echo "PROJECT_ID=gcp-dbt-prod" >> $GITHUB_ENV
+            echo "PROJECT_NUMBER=885925923288" >> $GITHUB_ENV
           else
             echo "ENV=dev" >> $GITHUB_ENV
             echo "PROJECT_ID=gcp-dbt-dev" >> $GITHUB_ENV
+            echo "PROJECT_NUMBER=294876439505" >> $GITHUB_ENV
           fi
+
 
       # ✅ Auth Workload Identity
       - uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          workload_identity_provider: projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
           service_account: terraform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
-
       - uses: google-github-actions/setup-gcloud@v2
 
       - uses: hashicorp/setup-terraform@v2
