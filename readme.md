@@ -116,3 +116,22 @@ gcloud iam service-accounts add-iam-policy-binding `
   --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/attribute.repository/$REPO"  
 
 
+
+
+gcloud iam service-accounts add-iam-policy-binding `
+  terraform-sa@gcp-dbt-prod.iam.gserviceaccount.com `
+  --project=gcp-dbt-prod `
+  --role="roles/iam.workloadIdentityUser" `
+  --member="principalSet://iam.googleapis.com/projects/885925923288/locations/global/workloadIdentityPools/github-pool/attribute.repository/amaraboudib-sogeti/gcp-dbt-infra-tutorial"
+
+gcloud iam service-accounts add-iam-policy-binding `
+  terraform-sa@gcp-dbt-prod.iam.gserviceaccount.com `
+  --project=gcp-dbt-prod `
+  --role="roles/iam.serviceAccountTokenCreator" `
+  --member="principalSet://iam.googleapis.com/projects/885925923288/locations/global/workloadIdentityPools/github-pool/attribute.repository/amaraboudib-sogeti/gcp-dbt-infra-tutorial"
+
+
+$PROJECT_ID = "gcp-dbt-prod"
+$PROJECT_NUMBER = "885925923288"
+$REPO = "amaraboudib-sogeti/gcp-dbt-infra-tutorial"
+$POOL = "github-pool"
