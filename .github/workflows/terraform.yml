@@ -1,6 +1,4 @@
-name: Terraform Multi Env
-
-on:
+name: Terraform Multi Envname:on:
   push:
     branches:
       - dev
@@ -17,35 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # ✅ déterminer env dynamiquement
-      - name: Set env
-        id: env
+      # ✅ détermination env
+      - name: Set environment
         run: |
           if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
-            echo "PROJECT_ID=gcp-dbt-prod" >> $GITHUB_ENV
             echo "ENV=prod" >> $GITHUB_ENV
+            echo "PROJECT_ID=gcp-dbt-prod" >> $GITHUB_ENV
           else
-            echo "PROJECT_ID=gcp-dbt-dev" >> $GITHUB_ENV
             echo "ENV=dev" >> $GITHUB_ENV
+            echo "PROJECT_ID=gcp-dbt-dev" >> $GITHUB_ENV
           fi
 
       # ✅ Auth Workload Identity
-    
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v1
+      - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-          service_account: terraform-sa@gcp-dbt-dev.iam.gserviceaccount.com
-
+          service_account: terraform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
 
       - uses: google-github-actions/setup-gcloud@v2
 
       - uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Init
+      # ✅ Terraform
+      - name: Init
         run: terraform init
         working-directory: envs/${{ env.ENV }}
 
       - name: Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve -var-file="terraform.tfvars"
         working-directory: envs/${{ env.ENV }}
