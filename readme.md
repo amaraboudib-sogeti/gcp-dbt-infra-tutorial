@@ -113,6 +113,10 @@ $PROJECT_NUMBER = gcloud projects describe $DEV_PROJECT_ID `
 gcloud iam service-accounts add-iam-policy-binding `
   terraform-sa@$DEV_PROJECT_ID.iam.gserviceaccount.com `
   --role="roles/iam.workloadIdentityUser" `
+<<<<<<< HEAD
   --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/attribute.repository/$REPO"
+=======
+  --member="principalSet://iam.googleapis.com/projects/$PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/attribute.repository/$REPO"  
+>>>>>>> dev
 
 

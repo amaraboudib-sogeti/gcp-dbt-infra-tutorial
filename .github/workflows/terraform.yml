@@ -1,0 +1,48 @@
+name: Terraform Multi Env
+on:
+  push:
+    branches:
+      - dev
+      - main
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # ✅ détermination env
+      - name: Set environment
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            echo "ENV=prod" >> $GITHUB_ENV
+            echo "PROJECT_ID=gcp-dbt-prod" >> $GITHUB_ENV
+          else
+            echo "ENV=dev" >> $GITHUB_ENV
+            echo "PROJECT_ID=gcp-dbt-dev" >> $GITHUB_ENV
+          fi
+
+      # ✅ Auth Workload Identity
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: terraform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: hashicorp/setup-terraform@v2
+
+      # ✅ Terraform
+      - name: Init
+        run: terraform init
+        working-directory: envs/${{ env.ENV }}
+
+      - name: Apply
+        run: terraform apply -auto-approve -var-file="terraform.tfvars"
+        working-directory: envs/${{ env.ENV }}
+
