@@ -30,10 +30,13 @@ jobs:
           fi
 
       # ✅ Auth Workload Identity
-      - uses: google-github-actions/auth@v1
+    
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: projects/PROJECT_NUMBER/locations/global/workloadIdentityPools/github-pool/providers/github
-          service_account: terraform-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com
+          workload_identity_provider: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: terraform-sa@gcp-dbt-dev.iam.gserviceaccount.com
+
 
       - uses: google-github-actions/setup-gcloud@v2
 
