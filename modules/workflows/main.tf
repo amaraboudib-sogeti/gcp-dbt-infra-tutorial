@@ -1,0 +1,29 @@
+main:
+  params: [region]
+
+  steps:
+
+    - init:
+        assign:
+          - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT")}
+
+    - load_users:
+        call: googleapis.bigquery.jobs.query
+        args:
+          projectId: ${project}
+          body:
+            query: >
+              CREATE OR REPLACE TABLE `${project}.bronze.users`
+              AS SELECT * FROM `${project}.bronze.users_ext`;
+
+    - load_connections:
+        call: googleapis.bigquery.jobs.query
+        args:
+          projectId: ${project}
+          body:
+            query: >
+              CREATE OR REPLACE TABLE `${project}.bronze.connections`
+              AS SELECT * FROM `${project}.bronze.connections_ext`;
+
+    - done:
+        return: "OK"

@@ -1,0 +1,8 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Terraform lock (OPTIONNEL mais recommandé)
+.terraform.lock.hcl
